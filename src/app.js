@@ -67,7 +67,6 @@ app.delete("/repositories/:id", (request, response) => {
 
 app.post("/repositories/:id/like", (request, response) => {
   const {
-    body: { url, title, techs },
     params: { id }
   } = request;
 
