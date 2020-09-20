@@ -33,23 +33,61 @@ app.put("/repositories/:id", (request, response) => {
 
   if (repositoryIndex < 0) {
     return response
-      .status(404)
+      .status(400)
       .json({ error: "Repository not found" });
   }
 
-  const updatedRepo = { id, url, title, techs };
-  repositories[repositoryIndex] = updatedRepo;
-  
-  return response.json(updatedRepo);
+  const updatedRepo = {
+    ...repositories[repositoryIndex],
+    url,
+    title,
+    techs,
+  };
 
+  repositories[repositoryIndex] = updatedRepo;
+
+  return response.json(updatedRepo);
 });
 
 app.delete("/repositories/:id", (request, response) => {
-  // TODO
+  const { params: { id } } = request;
+
+  const repositoryIndex = repositories.findIndex(repository => repository.id === id);
+
+  if (repositoryIndex < 0) {
+    return response
+      .status(400)
+      .json({ error: "Repository not found" });
+  }
+
+  repositories.splice(repositoryIndex, 1);
+
+  return response.status(204).json();
 });
 
 app.post("/repositories/:id/like", (request, response) => {
-  // TODO
+  const {
+    body: { url, title, techs },
+    params: { id }
+  } = request;
+
+  const repositoryIndex = repositories.findIndex(repository => repository.id === id);
+
+  if (repositoryIndex < 0) {
+    return response
+      .status(400)
+      .json({ error: "Repository not found" });
+  }
+
+  const updatedRepo = {
+    ...repositories[repositoryIndex],
+    likes: repositories[repositoryIndex].likes + 1
+  };
+
+  repositories[repositoryIndex] = updatedRepo;
+
+  return response.json(updatedRepo);
+
 });
 
 module.exports = app;
